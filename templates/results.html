@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan Results for {{ target }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .result-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .result-section h2 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+        .summary {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .summary p {
+            margin: 5px 0;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        a:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Scan Results for {{ target }}</h1>
+
+    <div class="result-section">
+        <h2>Open Ports</h2>
+        <table>
+            <tr>
+                <th>Port</th>
+                <th>State</th>
+            </tr>
+            {% for port in results.open_ports %}
+            <tr>
+                <td>{{ port.port }}</td>
+                <td>{{ port.state }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="result-section">
+        <h2>SQL Injection Check</h2>
+        <table>
+            <tr>
+                <th>Payload</th>
+                <th>Vulnerable</th>
+            </tr>
+            {% for result in results.sql_injection.vulnerabilities %}
+            <tr>
+                <td>{{ result.payload }}</td>
+                <td>{{ result.vulnerable }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="result-section">
+        <h2>WAF Detection</h2>
+        <table>
+            <tr>
+                <th>WAF Detected</th>
+                <th>Details</th>
+            </tr>
+            <tr>
+                <td>{{ results.waf_detection.waf_detected }}</td>
+                <td>{{ results.waf_detection.details | tojson }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="result-section">
+        <h2>Subdomain Enumeration</h2>
+        <table>
+            <tr>
+                <th>Subdomain</th>
+            </tr>
+            {% for subdomain in results.subdomain_enumeration.subdomains %}
+            <tr>
+                <td>{{ subdomain }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="result-section">
+        <h2>Security Headers Check</h2>
+        <table>
+            <tr>
+                <th>Missing Headers</th>
+            </tr>
+            {% for header in results.security_headers.missing_headers %}
+            <tr>
+                <td>{{ header }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="result-section">
+        <h2>CMS Detection</h2>
+        <table>
+            <tr>
+                <th>CMS Found</th>
+            </tr>
+            {% for cms in results.cms_detection.cms_found %}
+            <tr>
+                <td>{{ cms }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="result-section">
+        <h2>CSRF Check</h2>
+        <table>
+            <tr>
+                <th>CSRF Token Found</th>
+                <th>CSRF Token</th>
+            </tr>
+            <tr>
+                <td>{{ results.csrf_check.csrf_token_found }}</td>
+                <td>{{ results.csrf_check.csrf_token }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="result-section">
+        <h2>SSL/TLS Certificate Check</h2>
+        <table>
+            <tr>
+                <th>SSL Enabled</th>
+                <th>Status Code</th>
+            </tr>
+            <tr>
+                <td>{{ results.ssl_check.ssl_enabled }}</td>
+                <td>{{ results.ssl_check.status_code }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="result-section">
+        <h2>HTTP Methods Check</h2>
+        <table>
+            <tr>
+                <th>Allowed Methods</th>
+            </tr>
+            <tr>
+                <td>{{ results.http_methods.allowed_methods | join(', ') }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="result-section">
+        <h2>Content Security Policy Check</h2>
+        <table>
+            <tr>
+                <th>CSP Header</th>
+            </tr>
+            <tr>
+                <td>{{ results.csp_check.csp_header }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="result-section">
+        <h2>Open Redirect Check</h2>
+        <table>
+            <tr>
+                <th>Payload</th>
+                <th>Vulnerable</th>
+            </tr>
+            {% for result in results.open_redirect.open_redirects %}
+            <tr>
+                <td>{{ result.payload }}</td>
+                <td>{{ result.vulnerable }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="result-section">
+        <h2>Rate Limiting Check</h2>
+        <table>
+            <tr>
+                <th>Rate Limiting Detected</th>
+            </tr>
+            <tr>
+                <td>{{ results.rate_limiting.rate_limiting }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <a href="/">Back to Home</a>
+</body>
+</html>
